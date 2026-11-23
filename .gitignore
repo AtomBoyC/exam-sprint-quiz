@@ -1,0 +1,16 @@
+# macOS system files
+.DS_Store
+._*
+
+# Local private exam banks (kept locally, not uploaded to GitHub)
+我的考试题库_*.csv
+我的考试题库_*.xlsx
+我的考试题库_*.json
+js/builtin-bank.js
+
+# Editor & temporary files
+*.swp
+*.swo
+*.tmp
+.vscode/
+.idea/
