@@ -1,0 +1,9 @@
+{
+  "name": "exam-sprint-quiz",
+  "version": "3.0.0",
+  "private": true,
+  "description": "极速刷题宝 ExamSprint Studio · Desktop & Web",
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.2.0"
+  }
+}

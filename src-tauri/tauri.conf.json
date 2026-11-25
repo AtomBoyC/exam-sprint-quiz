@@ -9,6 +9,7 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "极速刷题宝 · ExamSprint Studio",
         "width": 1240,
         "height": 840,
