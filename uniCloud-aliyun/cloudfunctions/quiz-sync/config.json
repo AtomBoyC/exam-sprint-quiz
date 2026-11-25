@@ -1,0 +1,5 @@
+{
+  "wxAppId": "",
+  "wxAppSecret": "",
+  "note": "如需启用微信小程序一键登录，建议复制本文件为 config.local.json（已被 .gitignore 忽略不会上传到 GitHub）并填入你的小程序 AppID 和 AppSecret；账号密码注册登录无需任何配置即可直接使用！"
+}

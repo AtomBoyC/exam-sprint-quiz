@@ -1,16 +1,32 @@
-# macOS system files
+# OS files
 .DS_Store
 ._*
+Thumbs.db
 
-# Local private exam banks (kept locally, not uploaded to GitHub)
-我的考试题库_*.csv
-我的考试题库_*.xlsx
-我的考试题库_*.json
-js/builtin-bank.js
+# Private / Local Exam Question Banks (never commit to public repo)
+我的考试题库_*
+**/builtin-bank.js
+local-banks/
 
-# Editor & temporary files
+# Node & Build artifacts
+node_modules/
+unpackage/
+dist/
+.hbuilderx/
+.ci/h5-builder/node_modules/
+.ci/h5-builder/src/
+.ci/h5-builder/dist/
+
+# Tauri / Rust build artifacts
+src-tauri/target/
+src-tauri/gen/
+
+# uniCloud local config secrets (if customized with real AppSecret)
+uniCloud-aliyun/cloudfunctions/quiz-sync/config.local.json
+
+# Editor files
 *.swp
 *.swo
-*.tmp
+*.log
 .vscode/
 .idea/
