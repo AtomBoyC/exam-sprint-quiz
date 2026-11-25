@@ -1,6 +1,6 @@
 [package]
 name = "exam-sprint-quiz"
-version = "2.0.0"
+version = "3.0.0"
 description = "极速刷题宝 · 全平台云同步智能题库桌面客户端"
 authors = ["AtomBoyC"]
 license = "MIT"

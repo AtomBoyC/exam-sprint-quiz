@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light" data-font="md">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>极速刷题宝 · ExamSprint Desktop & Web</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" type="image/png" href="./static/logo.png" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div id="appShell" class="app-layout">
+    <!-- ==================== LEFT SIDEBAR ==================== -->
+    <aside class="sidebar" id="appSidebar">
+      <div class="sidebar-brand" id="brandHomeBtn">
+        <div class="brand-mark">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+          </svg>
+        </div>
+        <div class="brand-copy">
+          <div class="brand-name">极速刷题宝</div>
+          <div class="brand-tag">ExamSprint Studio</div>
+        </div>
+      </div>
+
+      <!-- Active Bank Switcher Card -->
+      <div class="sidebar-bank-box" id="sidebarBankWrap">
+        <div class="sb-label">当前激活题库</div>
+        <select id="activeBankSelect" class="sb-select" aria-label="切换当前题库"></select>
+        <div class="sb-mini-prog">
+          <div id="sbMiniProgFill" class="sb-mini-fill" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Primary Navigation -->
+      <nav class="sidebar-nav" aria-label="主导航">
+        <button class="snav-item active" data-view="home">
+          <svg class="snav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+          <span>学习工作台</span>
+        </button>
+        <button class="snav-item" data-view="import">
+          <svg class="snav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span>智能导入题库</span>
+        </button>
+        <button class="snav-item" data-view="manage">
+          <svg class="snav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <span>题库与查重体检</span>
+        </button>
+        <button class="snav-item" data-view="analytics">
+          <svg class="snav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          <span>统计与薄弱章节</span>
+        </button>
+        <button class="snav-item" data-view="sync">
+          <svg class="snav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+          <span>云同步与偏好</span>
+          <span id="navSyncDot" class="nav-dot hidden"></span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div class="sidebar-footer">
+        <button class="cmd-trigger-btn" id="openCmdPaletteBtn" title="全局搜题与命令面板 (Cmd+K / Ctrl+K)">
+          <span>🔍 全局快搜题目...</span>
+          <kbd>⌘K</kbd>
+        </button>
+
+        <div class="theme-seg" role="group" aria-label="界面主题切换">
+          <button type="button" class="tseg-btn active" data-set-theme="light" title="晨曦白">☀️ 晨白</button>
+          <button type="button" class="tseg-btn" data-set-theme="sepia" title="暖纸护眼">📜 暖纸</button>
+          <button type="button" class="tseg-btn" data-set-theme="dark" title="深空暗夜">🌙 暗夜</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Mobile / Compact Top Bar -->
+    <header class="mobile-header">
+      <button class="icon-btn" id="mobileMenuBtn" aria-label="打开菜单">☰</button>
+      <div class="mobile-title">极速刷题宝</div>
+      <button class="icon-btn" id="mobileSearchBtn" aria-label="全局搜题">🔍</button>
+    </header>
+    <div id="sidebarOverlay" class="sidebar-overlay hidden"></div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+    <!-- ==================== MAIN WORKSPACE ==================== -->
+    <main class="workspace">
+
+      <!-- ==================== VIEW 1: DASHBOARD (学习工作台) ==================== -->
+      <section id="view-home" class="view active">
+        <!-- Empty Welcome Hero -->
+        <div id="homeEmptyState" class="empty-hero hidden">
+          <div class="hero-glow"></div>
+          <span class="pill pill-indigo">Desktop & Web · 离线优先 · 多端同步</span>
+          <h1 class="hero-h1">专注、高颜值、真正懂记忆规律的刷题工作台</h1>
+          <p class="hero-p">
+            支持直接拖入 <strong>Excel (.xlsx)</strong>、<strong>CSV</strong>、<strong>Word (.docx)</strong>、<strong>TXT / Markdown</strong>、<strong>JSON</strong> 或直接粘贴 PDF 文本。<br />
+            融合<strong>斩杀清零</strong>、<strong>SM-2 艾宾浩斯记忆曲线</strong>、<strong>题号区间选刷</strong>、<strong>题库查重</strong>与 <strong>GitHub 私有云同步</strong>。
+          </p>
+          <div class="hero-cta-row">
+            <button class="btn btn-primary btn-lg" id="heroImportBtn">📤 导入我的题库</button>
+            <button class="btn btn-secondary btn-lg" id="heroDemoBtn">✨ 加载精选示例题库</button>
+          </div>
+          <div class="hero-features">
+            <span>⚔️ 连对自动斩杀</span>
+            <span>🧠 艾宾浩斯智能复习</span>
+            <span>🔢 指定题号区间选刷</span>
+            <span>📜 暖纸/暗夜三主题护眼</span>
+            <span>⌘K 毫秒级全局搜题</span>
+          </div>
+        </div>
+
+        <!-- Active Dashboard -->
+        <div id="homeDashboard" class="dashboard hidden">
+          <!-- Workspace Header Row -->
+          <div class="ws-topbar">
+            <div>
+              <h1 id="dashBankTitle" class="ws-title">我的题库</h1>
+              <p class="ws-subtitle" id="dashSubtitle">今日已刷 0 题 · 保持节奏，稳步通关</p>
+            </div>
+            <div class="ws-topbar-right">
+              <button class="countdown-pill" id="examCountdownBtn" title="点击设置考试日期倒计时">
+                🎯 设置考试倒计时
+              </button>
+              <button class="btn btn-secondary btn-sm" id="quickGistSyncBtn" title="多设备云端同步">
+                ☁️ <span id="quickSyncLabel">云同步</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Resume Banner -->
+          <div id="resumeBanner" class="resume-banner hidden">
+            <div class="resume-left">
+              <span class="pill pill-indigo">断点续刷</span>
+              <span id="resumeText">顺序刷题 · 进行到第 1 / 100 题</span>
+            </div>
+            <div class="resume-right">
+              <button class="btn btn-primary btn-sm" id="resumeContinueBtn">继续上次进度 →</button>
+              <button class="btn btn-ghost btn-sm" id="resumeDismissBtn">忽略</button>
+            </div>
+          </div>
+
+          <!-- Bento Top Grid: Mastery Ring + Heatmap & Precision Filter -->
+          <div class="bento-top">
+            <!-- Left Bento: Ring + Core Stats -->
+            <div class="card bento-mastery">
+              <div class="ring-layout">
+                <div class="ring-wrap">
+                  <svg class="ring-svg" viewBox="0 0 120 120">
+                    <circle class="ring-bg" cx="60" cy="60" r="50" />
+                    <circle id="ringDoneCircle" class="ring-done" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16" />
+                    <circle id="ringMasterCircle" class="ring-master" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16" />
+                  </svg>
+                  <div class="ring-center">
+                    <div id="ringPctText" class="ring-pct">0%</div>
+                    <div class="ring-lbl">斩杀掌握</div>
+                  </div>
+                </div>
+
+                <div class="kpi-grid">
+                  <div class="kpi-tile">
+                    <div class="kpi-val" id="statTotal">0</div>
+                    <div class="kpi-lbl">题库总量</div>
+                  </div>
+                  <div class="kpi-tile">
+                    <div class="kpi-val" id="statAttempted">0</div>
+                    <div class="kpi-lbl">已刷题数</div>
+                  </div>
+                  <div class="kpi-tile">
+                    <div class="kpi-val text-green" id="statAccuracy">--</div>
+                    <div class="kpi-lbl">历史正确率</div>
+                  </div>
+                  <div class="kpi-tile clickable" id="statDueTile" title="点击开始艾宾浩斯记忆复习">
+                    <div class="kpi-val text-indigo" id="statDue">0</div>
+                    <div class="kpi-lbl">今日待复习</div>
+                  </div>
+                  <div class="kpi-tile clickable" id="statWrongTile" title="点击专攻错题本">
+                    <div class="kpi-val text-red" id="statWrong">0</div>
+                    <div class="kpi-lbl">错题本</div>
+                  </div>
+                  <div class="kpi-tile clickable" id="statBookmarkTile" title="点击复习重点收藏">
+                    <div class="kpi-val text-amber" id="statBookmark">0</div>
+                    <div class="kpi-lbl">重点收藏</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Bento: Precision Scope Filter + 14-Day Heatmap -->
+            <div class="card bento-controls">
+              <div class="ctrl-head">
+                <span class="ctrl-title">🎯 刷题范围与乱序控制</span>
+                <span class="ctrl-count" id="filteredCountHint">选定 0 题</span>
+              </div>
+
+              <div class="ctrl-grid">
+                <div class="ctrl-field">
+                  <label for="filterTypeSelect">题型</label>
+                  <select id="filterTypeSelect" class="form-select form-select-sm">
+                    <option value="all">全部题型</option>
+                    <option value="single">仅单选题</option>
+                    <option value="multiple">仅多选题</option>
+                    <option value="judge">仅判断题</option>
+                    <option value="fill">仅填空题</option>
+                    <option value="short">仅简答题</option>
+                  </select>
+                </div>
+
+                <div class="ctrl-field" id="filterCategoryWrap">
+                  <label for="filterCategorySelect">章节</label>
+                  <select id="filterCategorySelect" class="form-select form-select-sm">
+                    <option value="all">全部章节</option>
+                  </select>
+                </div>
+
+                <div class="ctrl-field ctrl-span-2">
+                  <label>题号区间选刷（留空默认全范围，适合大题库分批攻克）</label>
+                  <div class="range-inputs">
+                    <input type="number" id="rangeStartInput" class="form-input form-input-sm" min="1" placeholder="起始题号 (如 1)" />
+                    <span class="range-sep">至</span>
+                    <input type="number" id="rangeEndInput" class="form-input form-input-sm" min="1" placeholder="结束题号 (如 100)" />
+                    <button type="button" class="btn btn-ghost btn-xs" id="clearRangeBtn">重置全选</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ctrl-switches">
+                <label class="switch-item">
+                  <input type="checkbox" id="quickShuffleOpts" />
+                  <span>选项乱序（防记字母位置）</span>
+                </label>
+                <label class="switch-item">
+                  <input type="checkbox" id="quickAutoNext" />
+                  <span>单选/判断答对自动下一题</span>
+                </label>
+              </div>
+
+              <!-- 14-Day Study Activity Strip -->
+              <div class="heatmap-strip">
+                <span class="hm-label">近14天活跃</span>
+                <div id="heatmapCells" class="hm-cells"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7 Study Modes Grid -->
+          <div class="sec-bar">
+            <h2>选择学习与测验模式</h2>
+            <div class="sec-links">
+              <button class="link-btn" id="startBookmarkModeBtn">⭐ 只刷收藏题 (<span id="bookmarkBtnCount">0</span>)</button>
+              <button class="link-btn" id="exportWrongSheetBtn">🖨️ 导出错题打印速记单</button>
+            </div>
+          </div>
+
+          <div class="modes-grid">
+            <button class="mode-card" data-mode="practice">
+              <div class="mc-top">
+                <span class="mc-icon icon-blue">📖</span>
+                <span class="pill pill-blue" id="modeTagPractice">0 题</span>
+              </div>
+              <div class="mc-title">顺序精刷</div>
+              <div class="mc-desc">按选定区间与原题序逐题推进，即时批改解析并自动保存断点</div>
+            </button>
+
+            <button class="mode-card" data-mode="sprint">
+              <div class="mc-top">
+                <span class="mc-icon icon-purple">⚔️</span>
+                <span class="pill pill-purple" id="modeTagSprint">待斩 0</span>
+              </div>
+              <div class="mc-title">斩杀冲刺模式</div>
+              <div class="mc-desc">隐藏已掌握题，只刷盲区！连对达标自动斩杀，清零进度条超解压</div>
+            </button>
+
+            <button class="mode-card" data-mode="due">
+              <div class="mc-top">
+                <span class="mc-icon icon-indigo">🧠</span>
+                <span class="pill pill-indigo" id="modeTagDue">待复习 0</span>
+              </div>
+              <div class="mc-title">艾宾浩斯记忆复习</div>
+              <div class="mc-desc">基于 SM-2 遗忘曲线智能调度即将遗忘的题目，花最少时间牢记</div>
+            </button>
+
+            <button class="mode-card" data-mode="random">
+              <div class="mc-top">
+                <span class="mc-icon icon-cyan">🔀</span>
+                <span class="pill pill-blue">乱序检验</span>
+              </div>
+              <div class="mc-title">随机乱序刷题</div>
+              <div class="mc-desc">全随机打乱题序，建议搭配“选项乱序”，彻底告别假性记住</div>
+            </button>
+
+            <button class="mode-card" data-mode="recite">
+              <div class="mc-top">
+                <span class="mc-icon icon-amber">⚡</span>
+                <span class="pill pill-amber">主动闪卡</span>
+              </div>
+              <div class="mc-title">极速背题模式</div>
+              <div class="mc-desc">直接高亮答案与解析，按 R 键可一键遮挡做闪卡式主动回忆</div>
+            </button>
+
+            <button class="mode-card" data-mode="wrong">
+              <div class="mc-top">
+                <span class="mc-icon icon-red">🎯</span>
+                <span class="pill pill-red" id="modeTagWrong">0 错题</span>
+              </div>
+              <div class="mc-title">错题本高频攻坚</div>
+              <div class="mc-desc">按历史错误次数从高到低排序，集中火力攻克反复出错的顽固考点</div>
+            </button>
+
+            <button class="mode-card mode-card-wide" data-mode="exam">
+              <div class="mc-top">
+                <span class="mc-icon icon-green">⏱️</span>
+                <span class="pill pill-green">全真考场 · 自动阅卷诊断</span>
+              </div>
+              <div class="mc-title">全真限时模拟考试</div>
+              <div class="mc-desc">自定义抽题数量与考试倒计时，期间隐藏答案，交卷后输出分题型得分率与薄弱点复盘</div>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 2: ACTIVE STUDY STUDIO (沉浸刷题舱) ==================== -->
+      <section id="view-study" class="view">
+        <div class="study-header">
+          <div class="sh-left">
+            <button class="btn btn-ghost btn-sm" id="exitStudyBtn">← 返回工作台</button>
+            <span id="studyModeBadge" class="pill pill-indigo">顺序精刷</span>
+            <span id="studyProgressCounter" class="sh-counter">1 / 50</span>
+          </div>
+          <div class="sh-right">
+            <span id="studyTimerBadge" class="timer-badge hidden">⏱️ 30:00</span>
+            <span id="studyLiveStats" class="sh-stats"></span>
+            <button class="chip-btn hidden" id="reciteMaskToggleBtn" title="切换遮挡/显示答案 (快捷键 R)">🙈 遮挡答案</button>
+            <button class="chip-btn" id="zenModeBtn" title="切换无干扰专注全屏模式 (快捷键 F)">🧘 专注模式</button>
+            <button class="chip-btn mobile-sheet-trigger" id="toggleSheetBtn">📋 答题卡</button>
+          </div>
+        </div>
+
+        <div class="study-prog-track">
+          <div id="studyProgressFill" class="study-prog-fill" style="width: 0%"></div>
+        </div>
+
+        <div class="study-studio">
+          <!-- Left: Question Card -->
+          <div class="study-main-col">
+            <article class="card question-card" id="questionCard">
+              <div class="qc-top">
+                <div class="qc-badges">
+                  <span id="qOrigIndexBadge" class="q-idx-pill">#1</span>
+                  <span id="qTypeBadge" class="pill pill-blue">单选题</span>
+                  <span id="qCategoryBadge" class="pill pill-gray hidden"></span>
+                  <span id="qSrsBadge" class="pill pill-indigo hidden"></span>
+                  <span id="qWrongCountBadge" class="pill pill-red hidden"></span>
+                </div>
+                <div class="qc-actions">
+                  <button class="chip-btn" id="qBookmarkBtn" title="收藏重点题 (快捷键 S)">☆ 收藏</button>
+                  <button class="chip-btn" id="qMasterBtn" title="标记为已斩杀 (快捷键 K)">⚔️ 斩杀</button>
+                  <button class="chip-btn" id="qEditBtn" title="编辑修正此题">✏️ 编辑</button>
+                </div>
+              </div>
+
+              <div id="qStem" class="q-stem"></div>
+
+              <div id="qInteractiveArea" class="q-interactive"></div>
+
+              <!-- Feedback & AI Prompt & Note Box -->
+              <div id="qFeedbackBox" class="feedback-panel hidden">
+                <div id="qFeedbackBanner" class="fb-banner"></div>
+                <div id="qCorrectAnswerRow" class="fb-answer-row"></div>
+
+                <div id="qAnalysisBox" class="fb-analysis hidden">
+                  <div class="fba-head">💡 答案解析</div>
+                  <div id="qAnalysisText" class="fba-body"></div>
+                </div>
+
+                <!-- AI Assistant Quick Prompt Bar -->
+                <div class="ai-helper-bar">
+                  <span class="ai-helper-tip">🤔 没有解析或没看懂？</span>
+                  <div class="ai-helper-btns">
+                    <button type="button" class="btn btn-ghost btn-xs" id="copyAiPromptBtn">✨ 一键复制 AI 讲题提问词</button>
+                    <button type="button" class="btn btn-ghost btn-xs" id="pasteSaveAnalysisBtn">📋 粘贴剪贴板内容存为本题解析</button>
+                  </div>
+                </div>
+
+                <!-- Personal Mnemonic Note -->
+                <div class="fb-note">
+                  <label for="qNoteInput">📝 我的助记笔记（自动保存并随云同步）</label>
+                  <textarea id="qNoteInput" class="note-textarea" rows="2" placeholder="写下你的记忆口诀、易混对比点，下次刷到自动展示..."></textarea>
+                </div>
+              </div>
+            </article>
+
+            <!-- Study Bottom Controls -->
+            <div class="study-nav-bar">
+              <button class="btn btn-secondary" id="prevQuestionBtn">← 上一题</button>
+              <div class="kbd-legend">
+                <span><kbd>1-6</kbd>/<kbd>A-F</kbd> 作答</span>
+                <span><kbd>Enter</kbd> 提交/下一题</span>
+                <span><kbd>←</kbd><kbd>→</kbd> 切题</span>
+                <span><kbd>S</kbd> 收藏</span>
+                <span><kbd>K</kbd> 斩杀</span>
+                <span><kbd>F</kbd> 专注</span>
+              </div>
+              <div class="study-nav-right">
+                <button class="btn btn-primary" id="nextQuestionBtn">下一题 →</button>
+                <button class="btn btn-success hidden" id="submitExamBtn">✅ 交卷评分</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Answer Sheet -->
+          <aside class="card answer-sheet" id="answerSheet">
+            <div class="as-head">
+              <h3>📋 答题卡</h3>
+              <button class="icon-btn mobile-only-btn" id="closeSheetBtn">✕</button>
+            </div>
+            <div class="as-legend">
+              <span><i class="dot dot-green"></i>答对</span>
+              <span><i class="dot dot-red"></i>答错</span>
+              <span><i class="dot dot-blue"></i>已选</span>
+              <span><i class="dot dot-amber"></i>收藏</span>
+            </div>
+            <div id="sheetGrid" class="as-grid"></div>
+            <div class="as-foot">
+              <button class="btn btn-success btn-block hidden" id="sheetSubmitExamBtn">✅ 交卷并生成诊断报告</button>
+              <button class="btn btn-ghost btn-block btn-sm" id="sheetRestartBtn">🔄 重新开始本轮</button>
+            </div>
+          </aside>
+        </div>
+        <div id="sheetBackdrop" class="sidebar-overlay hidden"></div>
+      </section>
+
+      <!-- ==================== VIEW 3: EXAM RESULT REPORT ==================== -->
+      <section id="view-exam-result" class="view">
+        <div class="card result-panel">
+          <div class="res-hero">
+            <div id="resultScoreCircle" class="res-score-ring pass">
+              <span id="resultScoreNum" class="res-score-num">0</span>
+              <span class="res-score-unit">分</span>
+            </div>
+            <div class="res-info">
+              <h2 id="resultVerdict" class="res-verdict">模拟考试完成！</h2>
+              <div class="res-kpis">
+                <div><strong id="resCorrectCount" class="text-green">0</strong><span>答对</span></div>
+                <div><strong id="resWrongCount" class="text-red">0</strong><span>答错</span></div>
+                <div><strong id="resUnansweredCount">0</strong><span>未答</span></div>
+                <div><strong id="resTimeUsed">00:00</strong><span>总用时</span></div>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="res-subhead">各题型得分率诊断</h3>
+          <div id="resultTypeTable" class="res-type-list"></div>
+
+          <div class="res-actions">
+            <button class="btn btn-danger" id="resReviewWrongBtn">🎯 只复盘本次错题</button>
+            <button class="btn btn-secondary" id="resReviewAllBtn">📖 查看全卷解析</button>
+            <button class="btn btn-primary" id="resRetakeBtn">🔄 再测一套</button>
+            <button class="btn btn-ghost" id="resBackHomeBtn">返回工作台</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 4: SMART IMPORT (智能导入题库) ==================== -->
+      <section id="view-import" class="view">
+        <div class="ws-topbar">
+          <div>
+            <h1 class="ws-title">智能题库导入</h1>
+            <p class="ws-subtitle">100% 本地离线解析，支持自动表头映射、无表头 CSV 推断与重复题目合并清理。</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" id="loadDemoBankBtn">✨ 载入精选示例题库</button>
+        </div>
+
+        <div class="import-two-col">
+          <div class="card">
+            <div class="card-h">📁 方式一：拖放或选择文件</div>
+            <div id="dropzone" class="dropzone" tabindex="0" role="button">
+              <input type="file" id="fileInput" accept=".xlsx,.csv,.tsv,.docx,.json,.txt,.md,.pdf,.xls,.doc" hidden />
+              <div class="dz-icon">📂</div>
+              <div class="dz-title">点击选择文件，或直接将题库拖入此处</div>
+              <div class="dz-desc">原生支持 <strong>.xlsx (Excel)</strong>、<strong>.csv / .tsv</strong>、<strong>.docx (Word)</strong>、<strong>.txt / .md</strong>、<strong>.json</strong></div>
+              <div class="dz-hint">💡 PDF 题库请打开后全选复制文字 (Cmd+A / Ctrl+A)，粘贴到右侧框一键识别！</div>
+            </div>
+            <div class="tpl-downloads">
+              <span>下载标准模板：</span>
+              <button class="btn btn-ghost btn-xs" id="dlCsvTplBtn">⬇️ CSV/Excel 模板</button>
+              <button class="btn btn-ghost btn-xs" id="dlTxtTplBtn">⬇️ TXT 模板</button>
+              <button class="btn btn-ghost btn-xs" id="dlJsonTplBtn">⬇️ JSON 模板</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-h-between">
+              <span class="card-h">📋 方式二：智能粘贴（PDF / Word / 无表头 CSV）</span>
+              <button class="btn btn-ghost btn-xs" id="fillPasteSampleBtn">填入示例</button>
+            </div>
+            <textarea
+              id="pasteInput"
+              class="paste-box"
+              placeholder="直接粘贴题目文本或 CSV 数据！支持：&#10;1. 我国的根本大法是（ A ）。&#10;A. 宪法  B. 民法典  C. 刑法  D. 行政法&#10;&#10;支持多选、判断、填空、简答、文末「参考答案汇总」及从 Excel/CSV 复制的数据！"
+            ></textarea>
+            <div class="paste-foot">
+              <button class="btn btn-ghost btn-sm" id="clearPasteBtn">清空</button>
+              <button class="btn btn-primary" id="parsePasteBtn">🔍 智能解析预览</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Preview & Column Mapping Card -->
+        <div id="importPreviewCard" class="card preview-panel hidden">
+          <div class="pp-head">
+            <div>
+              <h2 class="pp-title">✅ 识别预览与确认</h2>
+              <div id="previewStatsBadges" class="badges-wrap"></div>
+            </div>
+            <div class="pp-name-field">
+              <label for="importBankNameInput">题库名称</label>
+              <input type="text" id="importBankNameInput" class="form-input" placeholder="输入题库名称..." />
+            </div>
+          </div>
+
+          <div id="previewWarnings" class="warn-banner hidden"></div>
+
+          <div class="dedupe-bar">
+            <label class="switch-item">
+              <input type="checkbox" id="importAutoDedupeCheck" checked />
+              <span>导入时自动合并清理重复题目（保留更完整的解析与章节信息）</span>
+            </label>
+          </div>
+
+          <div id="tableMappingPanel" class="mapping-box hidden">
+            <div class="mb-head">
+              <span class="mb-title">🛠️ 表格列映射（已自动识别，可随时微调）</span>
+              <div class="mb-ctrls">
+                <label id="sheetSelectWrap" class="inline-lbl hidden">
+                  工作表：
+                  <select id="sheetSelect" class="form-select form-select-xs"></select>
+                </label>
+                <label class="switch-item">
+                  <input type="checkbox" id="hasHeaderCheck" checked />
+                  <span>首行为表头</span>
+                </label>
+              </div>
+            </div>
+            <div id="mappingGrid" class="mapping-grid"></div>
+          </div>
+
+          <div id="previewQuestionList" class="preview-q-list"></div>
+
+          <div class="pp-foot">
+            <button class="btn btn-ghost" id="cancelImportBtn">取消</button>
+            <button class="btn btn-secondary hidden" id="appendImportBtn">➕ 追加到当前题库</button>
+            <button class="btn btn-primary btn-lg" id="confirmImportBtn">🚀 确认导入并开始学习</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 5: LIBRARY & HEALTH CHECK (题库与体检) ==================== -->
+      <section id="view-manage" class="view">
+        <div class="ws-topbar">
+          <div>
+            <h1 class="ws-title">题库管理与查重体检</h1>
+            <p class="ws-subtitle">多题库切换、一键查重去重、全文检索、在线改题及导出打印资料。</p>
+          </div>
+          <div class="ws-topbar-right">
+            <button class="btn btn-secondary btn-sm" id="runHealthCheckBtn">🩺 题库体检与去重</button>
+            <button class="btn btn-primary btn-sm" id="addQuestionBtn">➕ 手动新增题目</button>
+          </div>
+        </div>
+
+        <!-- Bank Health Report Banner -->
+        <div id="healthReportCard" class="card health-card hidden"></div>
+
+        <!-- Bank Chips & Operations -->
+        <div class="card bank-ops-bar">
+          <div id="manageBankChips" class="bank-chips"></div>
+          <div id="manageBankOps" class="bank-ops-btns">
+            <button class="btn btn-ghost btn-xs" id="renameBankBtn">✏️ 重命名</button>
+            <button class="btn btn-ghost btn-xs" id="exportBankJsonBtn">💾 导出题库 JSON</button>
+            <button class="btn btn-ghost btn-xs" id="exportWrongMdBtn">🖨️ 导出错题打印单</button>
+            <button class="btn btn-ghost btn-xs text-amber" id="resetProgressBtn">🔄 清空刷题记录</button>
+            <button class="btn btn-ghost btn-xs text-red" id="deleteBankBtn">🗑️ 删除题库</button>
+          </div>
+        </div>
+
+        <!-- Filter & Search -->
+        <div class="card search-filter-bar">
+          <input type="search" id="manageSearchInput" class="form-input search-flex" placeholder="🔍 搜索题干、选项、解析、章节或助记笔记..." />
+          <select id="manageTypeFilter" class="form-select form-select-sm">
+            <option value="all">全部题型</option>
+            <option value="single">单选题</option>
+            <option value="multiple">多选题</option>
+            <option value="judge">判断题</option>
+            <option value="fill">填空题</option>
+            <option value="short">简答题</option>
+          </select>
+          <select id="manageStatusFilter" class="form-select form-select-sm">
+            <option value="all">全部状态</option>
+            <option value="wrong">错题本</option>
+            <option value="due">今日待复习</option>
+            <option value="unmastered">待斩杀</option>
+            <option value="mastered">已斩杀</option>
+            <option value="bookmarked">已收藏</option>
+            <option value="unanswered">未做过</option>
+            <option value="noanswer">缺少答案</option>
+          </select>
+          <span id="manageCountLabel" class="manage-total-lbl">0 题</span>
+        </div>
+
+        <div id="manageQuestionList" class="manage-q-list"></div>
+        <div id="manageLoadMoreWrap" class="load-more-row hidden">
+          <button class="btn btn-secondary" id="manageLoadMoreBtn">加载更多题目</button>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 6: ANALYTICS (统计与薄弱章节诊断) ==================== -->
+      <section id="view-analytics" class="view">
+        <div class="ws-topbar">
+          <div>
+            <h1 class="ws-title">学习统计与薄弱章节诊断</h1>
+            <p class="ws-subtitle">精准定位得分率最低的知识模块，把复习时间花在刀刃上。</p>
+          </div>
+        </div>
+
+        <!-- Retention Stages Distribution -->
+        <div class="card">
+          <div class="card-h">🧠 记忆掌握阶段分布（基于艾宾浩斯复习模型）</div>
+          <div id="retentionStackedBar" class="stacked-bar"></div>
+          <div id="retentionLegend" class="stacked-legend"></div>
+        </div>
+
+        <!-- Chapter Mastery & Accuracy Ranking -->
+        <div class="card">
+          <div class="card-h-between">
+            <span class="card-h">📊 各章节掌握度与正确率诊断（点击可直接突击薄弱章节）</span>
+            <select id="chapterSortSelect" class="form-select form-select-xs">
+              <option value="weakest">按薄弱程度优先（推荐）</option>
+              <option value="order">按原章节顺序</option>
+            </select>
+          </div>
+          <div id="chapterAnalyticsList" class="chapter-diag-list"></div>
+        </div>
+
+        <!-- Exam Score Trend -->
+        <div class="card">
+          <div class="card-h">⏱️ 模拟考试历史成绩曲线</div>
+          <div id="examTrendContainer"></div>
+        </div>
+      </section>
+
+      <!-- ==================== VIEW 7: CLOUD SYNC & SETTINGS ==================== -->
+      <section id="view-sync" class="view">
+        <div class="ws-topbar">
+          <div>
+            <h1 class="ws-title">多端云同步与偏好设置</h1>
+            <p class="ws-subtitle">无需自建服务器，使用免费私密的 GitHub Gist 或全量快照文件在多台电脑与浏览器间无损同步。</p>
+          </div>
+        </div>
+
+        <div class="sync-two-col">
+          <!-- Left: GitHub Private Gist Cloud Sync -->
+          <div class="card">
+            <div class="card-h-between">
+              <span class="card-h">☁️ GitHub 私有 Gist 多端自动同步（免费 · 免服务器）</span>
+              <span id="gistStatusBadge" class="pill pill-gray">未配置</span>
+            </div>
+            <p class="sync-desc">
+              只需填入一个勾选了 <code>gist</code> 权限的 GitHub Personal Access Token，系统会自动在你的账号下创建<strong>仅你自己可见的私密 Gist</strong>，在新电脑或新浏览器填入同一 Token 即可自动发现并双向增量合并题库、错题本、斩杀进度和助记笔记！
+            </p>
+
+            <div class="form-group">
+              <label for="gistTokenInput">GitHub Personal Access Token（仅保存在本机浏览器）</label>
+              <input type="password" id="gistTokenInput" class="form-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+            </div>
+            <div class="form-group">
+              <label for="gistIdInput">Gist ID（留空即可自动识别或自动创建）</label>
+              <input type="text" id="gistIdInput" class="form-input" placeholder="留空自动关联 examsprint_cloud_sync.json" />
+            </div>
+
+            <label class="switch-item" style="margin-bottom: 16px">
+              <input type="checkbox" id="autoGistSyncCheck" />
+              <span>刷题过程中后台自动静默增量同步</span>
+            </label>
+
+            <div class="sync-btn-row">
+              <button class="btn btn-primary" id="syncGistNowBtn">🔄 保存并立即双向同步</button>
+              <button class="btn btn-ghost btn-sm" id="clearGistBtn">断开绑定</button>
+            </div>
+            <div id="lastSyncTimeLabel" class="sync-time-hint"></div>
+
+            <!-- Full File Snapshot Backup -->
+            <div class="snapshot-divider"></div>
+            <div class="card-h">📦 全量数据文件备份与恢复（离线跨电脑迁移）</div>
+            <p class="sync-desc">一键将所有题库、错题记录、斩杀状态、活跃热力图打包为单个 <code>.examsprint.json</code> 文件，导入时同样支持无冲突增量合并。</p>
+            <div class="sync-btn-row">
+              <button class="btn btn-secondary btn-sm" id="exportSnapshotBtn">⬇️ 导出全量备份文件</button>
+              <button class="btn btn-secondary btn-sm" id="importSnapshotBtn">⬆️ 导入合并备份文件</button>
+              <input type="file" id="snapshotFileInput" accept=".json" hidden />
+            </div>
+          </div>
+
+          <!-- Right: Study Preferences & Exam Target -->
+          <div class="card">
+            <div class="card-h">⚙️ 学习偏好与考试目标</div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="setExamTitle">目标考试名称</label>
+                <input type="text" id="setExamTitle" class="form-input" placeholder="如：期末考试 / 软考网络工程师" />
+              </div>
+              <div class="form-group">
+                <label for="setExamDate">目标考试日期</label>
+                <input type="date" id="setExamDate" class="form-input" />
+              </div>
+            </div>
+
+            <div class="pref-list">
+              <div class="pref-item">
+                <div>
+                  <div class="pref-title">答对自动跳转下一题</div>
+                  <div class="pref-sub">单选与判断题答对后自动推进</div>
+                </div>
+                <input type="checkbox" id="setAutoNext" class="pref-check" />
+              </div>
+
+              <div class="pref-item">
+                <div>
+                  <div class="pref-title">自动跳题延迟</div>
+                  <div class="pref-sub">留出短暂视觉确认反馈时间</div>
+                </div>
+                <select id="setAutoNextDelay" class="form-select form-select-xs">
+                  <option value="350">极速 (0.35s)</option>
+                  <option value="550">流畅 (0.55s)</option>
+                  <option value="1000">从容 (1.0s)</option>
+                </select>
+              </div>
+
+              <div class="pref-item">
+                <div>
+                  <div class="pref-title">选项随机乱序</div>
+                  <div class="pref-sub">每次出题打乱 A/B/C/D 顺序</div>
+                </div>
+                <input type="checkbox" id="setShuffleOpts" class="pref-check" />
+              </div>
+
+              <div class="pref-item">
+                <div>
+                  <div class="pref-title">错题答对自动移出错题本</div>
+                  <div class="pref-sub">在错题攻坚模式中答对即销号</div>
+                </div>
+                <input type="checkbox" id="setAutoRemoveWrong" class="pref-check" />
+              </div>
+
+              <div class="pref-item">
+                <div>
+                  <div class="pref-title">斩杀冲刺达标连对次数</div>
+                  <div class="pref-sub">连续答对几次自动标记“已斩杀”</div>
+                </div>
+                <select id="setMasteryTarget" class="form-select form-select-xs">
+                  <option value="1">连对 1 次（考前突击）</option>
+                  <option value="2">连对 2 次（稳固掌握）</option>
+                  <option value="3">连对 3 次（深度记忆）</option>
+                </select>
+              </div>
+
+              <div class="pref-item">
+                <div>
+                  <div class="pref-title">清脆答题音效反馈</div>
+                  <div class="pref-sub">使用 Web Audio 合成轻柔正误提示音</div>
+                </div>
+                <input type="checkbox" id="setSoundEnabled" class="pref-check" />
+              </div>
+
+              <div class="pref-item">
+                <div>
+                  <div class="pref-title">题目阅读字号</div>
+                  <div class="pref-sub">适配不同高分屏与阅读距离</div>
+                </div>
+                <select id="setFontSize" class="form-select form-select-xs">
+                  <option value="sm">紧凑字号</option>
+                  <option value="md">标准字号</option>
+                  <option value="lg">大号护眼</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Modal 1: Cmd+K Global Question Search & Command Palette -->
+  <div id="cmdPaletteModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="全局快搜面板">
+    <div class="modal-backdrop" data-close-modal="cmdPaletteModal"></div>
+    <div class="modal-box cmd-box">
+      <div class="cmd-input-wrap">
+        <span class="cmd-icon">🔍</span>
+        <input type="search" id="cmdSearchInput" class="cmd-input" placeholder="输入题目关键词秒查答案与解析，或输入模式名称..." autocomplete="off" />
+        <kbd class="cmd-esc" data-close-modal="cmdPaletteModal">ESC</kbd>
+      </div>
+      <div id="cmdResultsList" class="cmd-results"></div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Mock Exam Setup -->
+  <div id="examConfigModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" data-close-modal="examConfigModal"></div>
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>⏱️ 全真模拟考试设置</h3>
+        <button class="icon-btn" data-close-modal="examConfigModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="examCountInput">抽题数量（当前筛选范围内最多 <span id="examMaxCount">0</span> 题）</label>
+          <div class="preset-chips">
+            <button type="button" class="chip-btn exam-count-preset" data-count="20">20 题</button>
+            <button type="button" class="chip-btn exam-count-preset" data-count="50">50 题</button>
+            <button type="button" class="chip-btn exam-count-preset" data-count="100">100 题</button>
+            <button type="button" class="chip-btn exam-count-preset" data-count="all">全部</button>
+          </div>
+          <input type="number" id="examCountInput" class="form-input" min="1" value="20" />
+        </div>
+        <div class="form-group">
+          <label for="examMinutesInput">考试时长（分钟）</label>
+          <div class="preset-chips">
+            <button type="button" class="chip-btn exam-time-preset" data-min="15">15 分钟</button>
+            <button type="button" class="chip-btn exam-time-preset" data-min="30">30 分钟</button>
+            <button type="button" class="chip-btn exam-time-preset" data-min="60">60 分钟</button>
+            <button type="button" class="chip-btn exam-time-preset" data-min="90">90 分钟</button>
+          </div>
+          <input type="number" id="examMinutesInput" class="form-input" min="1" max="300" value="30" />
+        </div>
+        <label class="switch-item">
+          <input type="checkbox" id="examShuffleOpts" />
+          <span>同时打乱选项顺序</span>
+        </label>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-close-modal="examConfigModal">取消</button>
+        <button class="btn btn-primary" id="startExamConfirmBtn">🚀 开始模拟考试</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Edit / Add Question -->
+  <div id="editQuestionModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" data-close-modal="editQuestionModal"></div>
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <h3 id="editQModalTitle">✏️ 编辑题目</h3>
+        <button class="icon-btn" data-close-modal="editQuestionModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="editQType">题型</label>
+            <select id="editQType" class="form-select">
+              <option value="single">单选题</option>
+              <option value="multiple">多选题</option>
+              <option value="judge">判断题</option>
+              <option value="fill">填空题</option>
+              <option value="short">简答题</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editQCategory">章节 / 分类（可选）</label>
+            <input type="text" id="editQCategory" class="form-input" placeholder="如：第一章 网络基础" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="editQStem">题干内容</label>
+          <textarea id="editQStem" class="form-textarea" rows="3"></textarea>
+        </div>
+        <div class="form-group" id="editQOptionsGroup">
+          <div class="card-h-between" style="margin-bottom: 6px">
+            <label style="margin:0">选项列表</label>
+            <button type="button" class="btn btn-ghost btn-xs" id="addOptionRowBtn">➕ 添加选项</button>
+          </div>
+          <div id="editQOptionsList" class="edit-opts-list"></div>
+        </div>
+        <div class="form-group">
+          <label for="editQAnswer">标准答案（单选 A / 多选 ABC / 判断 对或错 / 填空多解用 | 分隔）</label>
+          <input type="text" id="editQAnswer" class="form-input" placeholder="如：A 或 ABC 或 对" />
+        </div>
+        <div class="form-group">
+          <label for="editQAnalysis">答案解析（可选）</label>
+          <textarea id="editQAnalysis" class="form-textarea" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" data-close-modal="editQuestionModal">取消</button>
+        <button class="btn btn-primary" id="saveEditQuestionBtn">💾 保存修改</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts (classic global scripts for 100% file:// + Web + Tauri compatibility) -->
+  <script src="./js/zip-reader.js"></script>
+  <script src="./js/parser.js"></script>
+  <script src="./js/srs-merge.js"></script>
+  <script src="./js/storage.js"></script>
+  <script src="./js/builtin-bank.js" onerror=""></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>

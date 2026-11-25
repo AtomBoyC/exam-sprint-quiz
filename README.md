@@ -1,70 +1,68 @@
-# ⚡ 极速刷题宝 v2.0 · 全平台云同步智能题库应用
+# ⚡ 极速刷题宝 · ExamSprint Studio (v3.0)
 
-一套代码覆盖 **微信小程序、Android App、iOS App、Web/PWA 网页、以及 Windows / macOS / Linux 电脑桌面客户端** 的智能刷题系统。采用 **本地离线优先 (Local-First) + `uniCloud` 免备案云端双向增量同步** 架构，断网毫秒级刷题，联网后多设备自动合并题库、错题本、斩杀进度与个人助记笔记。
+专注于 **电脑桌面三端（macOS / Windows / Linux）** 与 **现代浏览器网页端** 的高颜值、离线优先智能刷题工作台。融合了开源社区优秀刷题软件（`problem-killer`、`dati`、`FlashMath`、`Anki`）的核心精华：**斩杀清零、SM-2 艾宾浩斯记忆曲线、题号区间选刷、题库查重体检、薄弱章节诊断、三款护眼主题**以及**零服务器的 GitHub 私有 Gist 多端云同步**。
 
-> 📘 **保姆级全平台打包与云同步配置手册**：请阅读 **[完整操作文档 (`docs/操作文档.md`)](./docs/操作文档.md)**
+> 🌐 **在线网页版直达**：**[https://atomboyc.github.io/exam-sprint-quiz/](https://atomboyc.github.io/exam-sprint-quiz/)**  
+> 📘 **完整使用与打包手册**：请查看 **[操作文档 (`docs/操作文档.md`)](./docs/操作文档.md)**
 
 ---
 
-## 🌐 全平台支持矩阵
+## 🖥️ 支持平台与运行方式
 
-| 平台 | 技术方案 | 获取 / 构建方式 |
+| 使用方式 | 适用系统 | 启动 / 获取方法 |
 |---|---|---|
-| **Web / 手机 PWA** | `uni-app` Vue 3 H5 | 在线直达：**[https://atomboyc.github.io/exam-sprint-quiz/](https://atomboyc.github.io/exam-sprint-quiz/)**（GitHub Actions 自动构建） |
-| **微信小程序** | `uni-app` 原生编译 (`mp-weixin`) | HBuilderX 导入根目录 → 运行到微信开发者工具 / 一键上传发布 |
-| **Android App** | `uni-app` App 云打包 | HBuilderX → 发行 → 原生 App-云打包 → 直接生成 `.apk` 安装包 |
-| **iOS App** | `uni-app` App 云打包 / Xcode | HBuilderX 云打包 `.ipa` 或生成 Xcode 工程真机签名 |
-| **macOS / Windows / Linux 电脑端** | **Tauri v2** (~5MB 轻量原生壳) | GitHub 仓库 **Actions → Build Desktop Apps → Run workflow** 云端自动编译 `.dmg` / `.exe` / `.AppImage` |
-| **免构建单页离线版** | 纯原生 HTML/JS | 双击 [`standalone-html/index.html`](./standalone-html/index.html) 或访问在线 `/lite/` |
+| **在线网页 / PWA** | 任意系统浏览器 | 直接打开 [https://atomboyc.github.io/exam-sprint-quiz/](https://atomboyc.github.io/exam-sprint-quiz/)（可在地址栏一键安装为桌面应用） |
+| **本地免环境直接运行** | macOS / Windows / Linux | 无需安装 Node.js 或任何服务，下载仓库后直接双击 **[`index.html`](./index.html)** 即可离线使用 |
+| **原生电脑桌面客户端** | macOS (`.dmg`) · Windows (`.exe`/`.msi`) · Linux (`.AppImage`/`.deb`) | 基于 **Tauri v2**（仅 ~5MB），点击本仓库 **Actions → Build Desktop Apps → Run workflow** 云端一键编译下载 |
+
+> 🌿 **仓库其他存档分支**：`v1-standalone`（最初极简版）、`v2-multiplatform`（含小程序与手机 App 的 uni-app 多端归档分支，供日后扩展）。
 
 ---
 
-## ✨ 核心亮点
+## ✨ v3.0 核心功能亮点
 
-1. **☁️ 多端无冲突增量云同步 + 双登录体系**
-   - 支持 **通行证账号密码注册/登录** + **微信小程序一键快捷登录**，并支持微信账号与通行证账号互相绑定，实现小程序、手机 App、网页与电脑客户端跨生态无缝互通。
-   - **按题级时间戳（`updatedAt`）智能合并**：手机地铁上离线刷 30 题、电脑上刷 20 题，联网后自动合并对错记录、斩杀状态、收藏和助记笔记，绝不互相覆盖。
-   - 基于国内 **`uniCloud`** 云函数与云数据库，**微信小程序免自购服务器与免 ICP 域名备案**；同时支持「云函数 URL 化」供电脑端与外部网页直连。
-2. **📂 零 DOM 依赖全端离线解析引擎**
-   - 内置纯 JS 实现的 **RFC-1951 DEFLATE 解压器** 与 XML/CSV/文本解析器，不依赖浏览器 `DOMParser` 或 `DecompressionStream`，在**微信小程序 JSCore 环境**下同样原生支持从微信聊天/文件传输助手直接选择 **`.xlsx`、`.csv`、`.docx`、`.txt`、`.json`** 解析！
-   - 智能粘贴框同时支持 PDF 复制文本、行内选项、括号内嵌答案（自动挖空）、文末答案汇总及无表头稀疏 CSV。
-3. **🎯 6 大高效备考模式**
-   - **📖 顺序刷题** · **🔀 随机乱序（含选项乱序）** · **⚔️ 斩杀冲刺模式** · **⚡ 极速背题闪卡** · **🎯 错题本高频攻坚** · **⏱️ 全真限时模拟考**。
+### 1. 🎨 桌面级高颜值工作台与三款护眼主题
+- 精心打磨的侧边栏 Studio 布局，内置 **☀️ 晨曦白 (Light)**、**📜 暖纸护眼 (Sepia 纸张阅读色)**、**🌙 深空暗夜 (Dark)** 三套主题。
+- **🧘 Zen 专注模式（快捷键 `F`）**：刷题时一键收起左侧边栏，沉浸聚焦题目本身。
+- **⌘K / Ctrl+K 全局快搜面板**：随时随地呼出，输入关键词毫秒级检索题库题目并直接预览答案或跳题练习。
 
----
+### 2. 🧠 7 大科学刷题模式 + 精准范围选刷
+- **支持指定题号区间**（如只刷第 `101` ～ `200` 题）、按题型筛选、按章节筛选、**选项乱序**与**答对自动跳题**。
+- **7 大模式**：
+  1. **📖 顺序精刷**：按区间与原序推进，自动保存断点续刷。
+  2. **⚔️ 斩杀冲刺**：隐藏已掌握题，连对达标自动“斩杀”，实时显示待斩余量。
+  3. **🧠 艾宾浩斯记忆复习**：内置 **SM-2 间隔重复算法**（答错 10 分钟后强化，答对按 1天 → 3天 → 7天动态排期），每天自动筛选到期易忘题。
+  4. **🔀 随机乱序**：打乱题序与选项，彻底告别“只记住第3题选C”。
+  5. **⚡ 极速背题闪卡**：高亮答案解析，按 `R` 键一键遮挡做闪卡主动回忆。
+  6. **🎯 错题本高频攻坚**：按历史错题次数倒序排列，并支持一键导出 **「错题速记打印单 (.html)」** 打印或另存为 PDF。
+  7. **⏱️ 全真限时模拟考**：自定义题量与倒计时，交卷自动生成分题型得分诊断与历史成绩曲线。
 
-## 📁 仓库目录结构
+### 3. 📂 全格式零依赖导入 + 题库查重体检 + AI 讲题辅助
+- **100% 本地离线解析**：内置纯 JS DEFLATE 解压器与智能编码识别，直接拖入 **`.xlsx`、`.csv`（兼容 UTF-8 与 GBK）、`.docx`、`.txt` / `.md`、`.json`**，或粘贴 PDF 文本 / 无表头稀疏 CSV，支持可视化列映射微调。
+- **🩺 题库体检与一键去重**：自动检测重复/近似题干、缺失答案、异常选项，一键去重同时自动合并更完整的解析与章节信息。
+- **✨ AI 讲题联动**：针对无解析的原题，一键复制结构化 AI 讲题提问词，并可一键将剪贴板内容永久存回该题解析。
 
-```text
-exam-sprint-quiz/
-├── pages/                       # uni-app Vue 3 跨端页面（小程序 / App / 网页 / 桌面共用）
-│   ├── index/index.vue          # 刷题首页、进度仪表盘与 6 大模式入口
-│   ├── study/study.vue          # 沉浸式刷题、背题闪卡、模拟考试与成绩复盘
-│   ├── import/import.vue        # 跨端文件选择（含微信聊天选文件）与智能粘贴映射
-│   ├── manage/manage.vue        # 多题库管理、全文检索、在线改题与错题导出
-│   └── profile/profile.vue      # 账号登录/微信一键登录、跨端绑定与云同步中心
-├── utils/
-│   ├── doc-reader.js            # 纯 JS 跨端无依赖 ZIP / XLSX / DOCX / GBK 解码器
-│   ├── parser.js                # 全题型智能解析与判题引擎
-│   ├── merge.js                 # 多设备无冲突增量合并算法
-│   ├── store.js                 # Local-First 分片持久化状态管理（规避小程序单键1MB限制）
-│   └── cloud.js                 # uniCloud SDK + HTTP URL 双通道同步客户端
-├── uniCloud-aliyun/             # 国内免备案云端后端
-│   ├── cloudfunctions/quiz-sync/# 认证（账号密码 + 微信登录）与增量同步云函数
-│   └── database/*.schema.json   # 5 张安全隔离的数据表结构定义
-├── src-tauri/                   # Tauri v2 跨平台电脑客户端配置（Win / Mac / Linux）
-├── .ci/build-h5.sh              # 官方 uni-preset-vue H5 & PWA 自动化构建脚本
-├── .github/workflows/           # GitHub Actions 自动部署 Pages 与三端桌面安装包流水线
-├── standalone-html/             # 经典双击即用免构建纯静态版
-├── docs/操作文档.md              # 详细全平台打包、云同步开通与使用手册
-├── App.vue / main.js / manifest.json / pages.json
-└── LICENSE                      # MIT 开源协议
-```
+### 4. ☁️ 零服务器多端无损云同步（GitHub Private Gist）
+- 填入勾选了 `gist` 权限的 GitHub Token，无需购买任何服务器或配置数据库，自动在你的账号下创建**仅自己可见的私密 Gist**，在多台电脑与浏览器间按题目时间戳双向增量合并题库、错题、斩杀状态、活跃热力图与助记笔记。
+- 同时支持一键导出/导入 `.examsprint.json` 全量离线快照文件。
 
 ---
 
-## 🚀 3 分钟快速上手路线
+## ⌨️ 全局与刷题快捷键
 
-1. **立即在线体验 Web / 手机版**：打开 [https://atomboyc.github.io/exam-sprint-quiz/](https://atomboyc.github.io/exam-sprint-quiz/)。
-2. **一键获取 Windows / macOS / Linux 电脑安装包**：进入本仓库顶部的 **Actions → Build Desktop Apps → Run workflow**，等待编译完成后直接下载 `.dmg` / `.exe` / `.AppImage`。
-3. **运行微信小程序 / 打包手机 App / 激活云同步**：下载免费官方工具 [HBuilderX](https://www.dcloud.io/hbuilderx.html) 导入本仓库目录，按照 **[`docs/操作文档.md` 第 2～5 节](./docs/操作文档.md)** 指引点几下鼠标即可完成！
+| 快捷键 | 功能说明 |
+|---|---|
+| `⌘K` / `Ctrl+K` | 随时呼出全局极速搜题与命令面板 |
+| `1` – `6` 或 `A` – `F` | 快速选择对应选项（判断题：`1` 正确 / `2` 错误） |
+| `Enter` / `Space` | 提交多选/填空、揭晓简答题参考答案，或进入下一题 |
+| `←` / `→` | 上一题 / 下一题 |
+| `F` | 刷题界面切换 Zen 无干扰专注全屏模式 |
+| `S` | 收藏 / 取消收藏重点题 |
+| `K` | 手动斩杀 / 取消已掌握标记 |
+| `R` | 背题模式下切换遮挡/显示答案 |
+
+---
+
+## 📄 开源协议
+
+基于 [MIT License](./LICENSE) 开源。

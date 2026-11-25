@@ -36,7 +36,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
-      - name: Setup Node.js 20
+      - name: Setup Node.js 20 (for Tauri icon generator)
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -46,20 +46,27 @@ jobs:
         with:
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
-      - name: Build uni-app H5 frontend
-        run: bash .ci/build-h5.sh
+      - name: Assemble frontend dist for Tauri
+        shell: bash
+        run: |
+          mkdir -p _dist/js _dist/css _dist/static
+          cp index.html manifest.webmanifest _dist/
+          cp css/style.css _dist/css/
+          cp js/zip-reader.js js/parser.js js/srs-merge.js js/storage.js js/app.js _dist/js/
+          cp static/logo.png _dist/static/
 
-      - name: Generate Tauri multi-platform icons from static/logo.png
+      - name: Generate multi-platform Tauri icons
+        shell: bash
         run: npx --yes @tauri-apps/cli@^2 icon static/logo.png -o src-tauri/icons
 
-      - name: Build Tauri Desktop Installer
+      - name: Build Tauri Native Desktop App
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: v__VERSION__
           releaseName: "极速刷题宝 v__VERSION__ 桌面客户端"
-          releaseBody: "全平台云同步智能题库客户端安装包（macOS .dmg / Windows .exe / Linux .AppImage）"
+          releaseBody: "macOS (.dmg) / Windows (.exe, .msi) / Linux (.AppImage, .deb) 原生桌面客户端安装包"
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}

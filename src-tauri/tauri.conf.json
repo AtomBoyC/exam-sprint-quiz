@@ -1,18 +1,18 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "ExamSprintQuiz",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "identifier": "com.atomboyc.examsprint",
   "build": {
-    "frontendDist": "../.ci/h5-builder/dist/build/h5"
+    "frontendDist": "../_dist"
   },
   "app": {
     "windows": [
       {
-        "title": "极速刷题宝 · 全平台云同步题库助手",
-        "width": 1180,
-        "height": 820,
-        "minWidth": 390,
+        "title": "极速刷题宝 · ExamSprint Studio",
+        "width": 1240,
+        "height": 840,
+        "minWidth": 420,
         "minHeight": 640,
         "resizable": true,
         "fullscreen": false

@@ -3,26 +3,17 @@
 ._*
 Thumbs.db
 
-# Private / Local Exam Question Banks (never commit to public repo)
+# Local private exam banks (kept locally on your machine, never pushed to GitHub)
 我的考试题库_*
-**/builtin-bank.js
+js/builtin-bank.js
 local-banks/
 
-# Node & Build artifacts
+# Temporary staging & build directories
+_site/
+_dist/
 node_modules/
-unpackage/
-dist/
-.hbuilderx/
-.ci/h5-builder/node_modules/
-.ci/h5-builder/src/
-.ci/h5-builder/dist/
-
-# Tauri / Rust build artifacts
 src-tauri/target/
 src-tauri/gen/
-
-# uniCloud local config secrets (if customized with real AppSecret)
-uniCloud-aliyun/cloudfunctions/quiz-sync/config.local.json
 
 # Editor files
 *.swp

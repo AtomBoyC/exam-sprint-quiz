@@ -1,0 +1,16 @@
+{
+  "name": "极速刷题宝 · ExamSprint",
+  "short_name": "极速刷题宝",
+  "description": "高颜值桌面与网页端离线优先智能题库刷题系统（支持多端私有 Gist 云同步）",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F5F7FB",
+  "theme_color": "#4F46E5",
+  "icons": [
+    {
+      "src": "./static/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
